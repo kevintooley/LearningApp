@@ -22,19 +22,34 @@ struct HomeView: View {
                     
                 ScrollView {
                     
-                    LazyVStack(spacing: 20) {
+                    LazyVStack {
                         
                         ForEach(model.modules) { module in
                             
-                            //Learning Card
-                            HomeViewRow(image: module.content.image, title: "Learn \(module.category)", description: module.content.description, count: "\(module.content.lessons.count) lessons", time: module.content.time)
+                            VStack(spacing: 20) {
+                                
+                                NavigationLink(
+                                    destination: ContentView()
+                                        .onAppear(perform: {
+                                            model.beginModule(module.id)
+                                        }),
+                                    label: {
+                                        //Learning Card
+                                        HomeViewRow(image: module.content.image, title: "Learn \(module.category)", description: module.content.description, count: "\(module.content.lessons.count) lessons", time: module.content.time)
+                                    })
                             
-                            //Test Card
-                            HomeViewRow(image: module.test.image, title: "\(module.category) Test", description: module.test.description, count: "\(module.test.questions.count) questions", time: module.test.time)
+                                
+                                
+                                //Test Card
+                                HomeViewRow(image: module.test.image, title: "\(module.category) Test", description: module.test.description, count: "\(module.test.questions.count) questions", time: module.test.time)
                             
+                            }
+                                
                         }
                         
-                    }.padding()
+                    }
+                    .padding()
+                    .accentColor(.black)
                     
                 }
                 
