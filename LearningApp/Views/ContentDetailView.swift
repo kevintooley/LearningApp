@@ -38,6 +38,13 @@ struct ContentDetailView: View {
                     ButtonView(buttonColor: .green, textColor: .white, buttonText: "Next Lesson: \(model.currentModule!.content.lessons[model.currentLessonIndex + 1].title)")
                 })
             }
+            else {
+                Button(action: {
+                    model.currentContentSelected = nil
+                }, label: {
+                    ButtonView(buttonColor: .green, textColor: .white, buttonText: "Complete Lesson")
+                })
+            }
         }
         .padding()
         .navigationBarTitle(lesson?.title ?? "")

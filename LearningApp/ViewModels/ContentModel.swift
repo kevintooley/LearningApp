@@ -23,6 +23,9 @@ class ContentModel: ObservableObject {
     // Current Lesson Explanation
     @Published var lessonDescription = NSAttributedString()
     
+    // Current selected content and test: this is like the demo to roll back to the home screen.  i.e. $selectedIndex binding
+    @Published var currentContentSelected:Int?
+    
     var styleData: Data?
     
     init() {
