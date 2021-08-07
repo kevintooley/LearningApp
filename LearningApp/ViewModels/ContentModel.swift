@@ -20,6 +20,9 @@ class ContentModel: ObservableObject {
     @Published var currentLesson: Lesson?
     var currentLessonIndex = 0
     
+    // Current Lesson Explanation
+    @Published var lessonDescription = NSAttributedString()
+    
     var styleData: Data?
     
     init() {
@@ -110,8 +113,9 @@ class ContentModel: ObservableObject {
             currentLessonIndex = 0
         }
         
-        // Set the current lessons
+        // Set the current lessons and explanation
         currentLesson = currentModule!.content.lessons[currentLessonIndex]
+        lessonDescription = addStyling(currentLesson!.explanation)
     }
     
     func hasNextLesson() -> Bool {
@@ -130,6 +134,7 @@ class ContentModel: ObservableObject {
             
             // set the current lesson
             currentLesson = currentModule!.content.lessons[currentLessonIndex]
+            lessonDescription = addStyling(currentLesson!.explanation)
             
         }
         else {
@@ -139,6 +144,46 @@ class ContentModel: ObservableObject {
             currentLesson = nil
             
         }
+        
+    }
+    
+    // MARK - Code Styling
+    
+    private func addStyling(_ htmlStrong: String) -> NSAttributedString {
+        
+        var resultString = NSAttributedString()
+        var data = Data()
+        
+        // add the styling data
+        if styleData != nil {
+            data.append(self.styleData!)
+        }
+        
+        // add the html data
+        data.append(Data(htmlStrong.utf8))
+        
+        // convert to attributed string
+        // technique 1
+        if let attributedString = try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) {
+            
+            resultString = attributedString
+            
+        }
+        
+        // technique 2
+        /*
+         do {
+            let attributedString = try NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+            
+            resultString = attributedString
+            
+        }
+        catch {
+            print(error)
+        }
+         */
+        
+        return resultString
         
     }
     

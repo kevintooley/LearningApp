@@ -24,7 +24,8 @@ struct ContentDetailView: View {
                 VideoPlayer(player: AVPlayer(url: url!))
             }
             
-            //TODO: Description
+            // Description
+            CodeTextView()
             
             // Next lesson button only if there is a next lesson
             
@@ -39,12 +40,13 @@ struct ContentDetailView: View {
             }
         }
         .padding()
+        .navigationBarTitle(lesson?.title ?? "")
         
     }
 }
 
-struct ContentDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentDetailView()
-    }
-}
+//struct ContentDetailView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentDetailView()
+//    }
+//}
