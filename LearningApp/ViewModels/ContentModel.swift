@@ -20,11 +20,16 @@ class ContentModel: ObservableObject {
     @Published var currentLesson: Lesson?
     var currentLessonIndex = 0
     
+    // Current Question
+    @Published var currentQuestion: Question?
+    var currentQuestionIndex = 0
+    
     // Current Lesson Explanation
-    @Published var lessonDescription = NSAttributedString()
+    @Published var codeText = NSAttributedString()
     
     // Current selected content and test: this is like the demo to roll back to the home screen.  i.e. $selectedIndex binding
     @Published var currentContentSelected:Int?
+    @Published var currentTestSelected:Int?
     
     var styleData: Data?
     
@@ -118,7 +123,7 @@ class ContentModel: ObservableObject {
         
         // Set the current lessons and explanation
         currentLesson = currentModule!.content.lessons[currentLessonIndex]
-        lessonDescription = addStyling(currentLesson!.explanation)
+        codeText = addStyling(currentLesson!.explanation)
     }
     
     func hasNextLesson() -> Bool {
@@ -137,7 +142,7 @@ class ContentModel: ObservableObject {
             
             // set the current lesson
             currentLesson = currentModule!.content.lessons[currentLessonIndex]
-            lessonDescription = addStyling(currentLesson!.explanation)
+            codeText = addStyling(currentLesson!.explanation)
             
         }
         else {
@@ -146,6 +151,22 @@ class ContentModel: ObservableObject {
             currentLessonIndex = 0
             currentLesson = nil
             
+        }
+        
+    }
+    
+    func beginTest(_ moduleId:Int) {
+        
+        // Set the current module
+        beginModule(moduleId)
+        
+        // Set the current question
+        currentQuestionIndex = 0
+        
+        // if the module has questions for the test, set the currentQuestion to the first one
+        if currentModule?.test.questions.count ?? 0 > 0 {
+            currentQuestion = currentModule!.test.questions[currentQuestionIndex]
+            codeText = addStyling(currentQuestion!.content)
         }
         
     }

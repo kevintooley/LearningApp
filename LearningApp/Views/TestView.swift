@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct TestView: View {
+    
+    @EnvironmentObject var model: ContentModel
+    
     var body: some View {
         
         VStack {
@@ -17,13 +20,12 @@ struct TestView: View {
                     .font(.largeTitle)
                     .padding(.leading, 20)
                 Spacer()
-                Text("Question 1 of 10")
+                Text("Question \(model.currentQuestionIndex + 1) of \(model.currentModule?.test.questions.count ?? 0)")
                     .padding(.trailing, 20)
             }.padding(.bottom, 40)
             
             //Question
-            Text("What is the answer to this question?")
-                .padding()
+            CodeTextView()
             
             ButtonView(buttonColor: .gray, textColor: .black, buttonText: "This is the sample problem (TODO: HTML)", buttonHeight: 90)
                 .padding(.horizontal)
@@ -48,7 +50,7 @@ struct TestView: View {
             ButtonView(buttonColor: .green, textColor: .white, buttonText: "Submit")
                 .padding()
             
-        }
+        }.navigationBarTitle("\(model.currentModule?.category ?? "") Test")
         
     }
 }
