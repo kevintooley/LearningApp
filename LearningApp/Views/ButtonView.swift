@@ -15,6 +15,7 @@ struct ButtonView: View {
     var buttonColor: Color
     var textColor: Color
     var buttonText: String
+    var buttonHeight: CGFloat? = 48
     
     var body: some View {
         
@@ -26,7 +27,7 @@ struct ButtonView: View {
                 .foregroundColor(buttonColor)
                 .cornerRadius(10)
                 .shadow(radius: 5)
-                .frame(height: 48)
+                .frame(height: buttonHeight)
             
             Text(buttonText)
                 .foregroundColor(textColor)
