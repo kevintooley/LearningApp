@@ -31,6 +31,8 @@ class ContentModel: ObservableObject {
     @Published var currentContentSelected:Int?
     @Published var currentTestSelected:Int?
     
+    @Published var finalize = false
+    
     var styleData: Data?
     
     init() {
@@ -190,11 +192,14 @@ class ContentModel: ObservableObject {
             currentQuestionIndex = 0
             currentQuestion = nil
             
+            //Added to try to fix IOS 14.5 bug
+            finalize = true
+            
         }
         
     }
     
-    // MARK - Code Styling
+    // MARK: Code Styling
     
     private func addStyling(_ htmlStrong: String) -> NSAttributedString {
         

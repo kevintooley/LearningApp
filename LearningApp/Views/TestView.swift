@@ -19,7 +19,10 @@ struct TestView: View {
     
     var body: some View {
         
-        if model.currentQuestion != nil {
+        // compound if check is a workaround to possible IOS bug.
+        // Without this, the Test will constantly loop back to question
+        // number 1 without showing the results page.  
+        if (model.currentQuestion != nil) && (model.finalize == false) {
             
             VStack(alignment: .leading) {
                 //Title
@@ -135,10 +138,20 @@ struct TestView: View {
                 
                 
             }.navigationBarTitle("\(model.currentModule?.category ?? "") Test")
-            
+
         }
         else {
-            ProgressView()
+
+            // Workaround for odd behavior in ios 14.5
+            if model.finalize {
+                
+                TestResultsView(numberCorrect: numCorrect)
+
+            }
+            else {
+                ProgressView()
+            }
+
         }
     }
     

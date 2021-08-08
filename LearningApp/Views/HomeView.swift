@@ -28,6 +28,7 @@ struct HomeView: View {
                             
                             VStack(spacing: 20) {
                                 
+                                // MARK: Content NavigationLink
                                 NavigationLink(
                                     destination: ContentView()
                                         .onAppear(perform: {
@@ -41,7 +42,7 @@ struct HomeView: View {
                                     })
                                 
                                 
-                            
+                                // MARK: Test NavigationLink
                                 NavigationLink(
                                     destination: TestView()
                                         .onAppear(perform: {
@@ -54,6 +55,9 @@ struct HomeView: View {
                                         HomeViewRow(image: module.test.image, title: "\(module.category) Test", description: module.test.description, count: "\(module.test.questions.count) questions", time: module.test.time)
                                     })
                                 
+                                // Workaround for known IOS issue:
+                                // https://developer.apple.com/forums/thread/677333
+                                // Add EmptyView navigation link
                                 NavigationLink(
                                     destination: EmptyView()) {
                                     EmptyView()
