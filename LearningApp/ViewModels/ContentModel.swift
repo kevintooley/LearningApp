@@ -37,7 +37,11 @@ class ContentModel: ObservableObject {
     
     init() {
         
+        // parse local json data
         getLocalData()
+        
+        // Download remote json file and parse
+        getRemoteData()
         
     }
     
@@ -89,6 +93,50 @@ class ContentModel: ObservableObject {
         catch {
             print("Couldn't read style data")
         }
+        
+    }
+    
+    func getRemoteData() {
+        
+        let urlString = "https://kevintooley.github.io/learning_pages/data2.json"
+        
+        let remoteUrl = URL(string: urlString)
+        
+        guard remoteUrl != nil else {
+            // Couldn't find url
+            return
+        }
+        
+        // create a URL request object
+        let request = URLRequest(url: remoteUrl!)
+        
+        // Get the url session and kick off task
+        let session = URLSession.shared
+        
+        let dataTask = session.dataTask(with: request) { data, response, error in
+            
+            // check if there is an error
+            guard error == nil else {
+                // There was an error
+                return
+            }
+            
+            do {
+                // create json decoders
+                let decoder = JSONDecoder()
+            
+                // decode
+                let modules = try decoder.decode([Module].self, from: data!)
+                
+                // append modules in to self.modules
+                self.modules += modules
+            }
+            catch {
+                print(error)
+            }
+        }
+        
+        dataTask.resume()
         
     }
     
