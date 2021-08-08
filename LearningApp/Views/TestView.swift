@@ -11,52 +11,132 @@ struct TestView: View {
     
     @EnvironmentObject var model: ContentModel
     
+    // track the answer given by the user
+    @State var selectedAnswerIndex:Int?
+    
+    @State var submitted = false
+    @State var numCorrect = 0
+    
     var body: some View {
         
-        VStack {
-            //Title
-            HStack {
-                Text("Swift Test")
-                    .font(.largeTitle)
-                    .padding(.leading, 20)
-                Spacer()
+        if model.currentQuestion != nil {
+            
+            VStack(alignment: .leading) {
+                //Title
+                
                 Text("Question \(model.currentQuestionIndex + 1) of \(model.currentModule?.test.questions.count ?? 0)")
-                    .padding(.trailing, 20)
-            }.padding(.bottom, 40)
-            
-            //Question
-            CodeTextView()
-            
-            ButtonView(buttonColor: .gray, textColor: .black, buttonText: "This is the sample problem (TODO: HTML)", buttonHeight: 90)
-                .padding(.horizontal)
-                .padding(.bottom, 40)
-            
-            //Multiple Choice Answer Boxes (ButtonView boxes)
+                    .padding(.leading, 20)
+                
+                //Question
+                CodeTextView()
+                    .padding(.horizontal, 20)
+                
+                /*
+                ButtonView(buttonColor: .gray, textColor: .black, buttonText: "This is the sample problem (TODO: HTML)", buttonHeight: 90)
+                    .padding(.horizontal)
+                    .padding(.bottom, 40)
+                */
+                
+                ScrollView {
+                    
+                    VStack {
+                        
+                        ForEach(0..<model.currentQuestion!.answers.count, id: \.self) { index in
+                            
+                            Button(action: {
+                                
+                                selectedAnswerIndex = index
+                                
+                            }, label: {
+                                
+                                ZStack {
+                                    
+                                    if !submitted {
+                                        Rectangle()
+                                            .foregroundColor(index == selectedAnswerIndex ? .gray : .white)
+                                            .cornerRadius(10)
+                                            .shadow(radius: 5)
+                                            .frame(height: 48)
+                                    }
+                                    else {
+                                        
+                                        if (selectedAnswerIndex == index) && (selectedAnswerIndex == model.currentQuestion!.correctIndex) || (index == model.currentQuestion!.correctIndex) {
+                                            Rectangle()
+                                                .foregroundColor(.green)
+                                                .cornerRadius(10)
+                                                .shadow(radius: 5)
+                                                .frame(height: 48)
+                                        }
+                                        else if selectedAnswerIndex == index && selectedAnswerIndex != model.currentQuestion!.correctIndex {
+                                            Rectangle()
+                                                .foregroundColor(.red)
+                                                .cornerRadius(10)
+                                                .shadow(radius: 5)
+                                                .frame(height: 48)
+                                        }
+                                        else {
+                                            Rectangle()
+                                                .foregroundColor(.white)
+                                                .cornerRadius(10)
+                                                .shadow(radius: 5)
+                                                .frame(height: 48)
+                                        }
+                                    }
+                                    
 
-            ButtonView(buttonColor: .white, textColor: .black, buttonText: "Answer 1")
-                .padding(.horizontal)
-                .padding(.bottom, 10)
-
-            ButtonView(buttonColor: .white, textColor: .black, buttonText: "Answer 2")
-                .padding(.horizontal)
-                .padding(.bottom, 10)
+                                    Text(model.currentQuestion!.answers[index])
+                                        .accentColor(.black)
+                                    
+                                }
+                                .padding(.horizontal, 20)
+                                
+                            })
+                            .disabled(submitted)
+                            
+                        }
+                        
+                    }
+                    .padding(.top, 20)
+                    
+                }
+                
+                // Submit Button
+                Button(action: {
+                    
+                    // toggle submitted flag
+                    submitted = true
+                    
+                    
+                    // check if the answer is correct
+                    if selectedAnswerIndex == model.currentQuestion!.correctIndex {
+                        numCorrect += 1
+                    }
+                    else {
+                        
+                    }
+                    
+                    // if not, show the correct answer
+                    
+                }, label: {
+                    ButtonView(buttonColor: .green,
+                               textColor: .white,
+                               buttonText: "Submit")
+                        .padding()
+                })
+                .disabled(selectedAnswerIndex == nil)
+                
+                
+            }.navigationBarTitle("\(model.currentModule?.category ?? "") Test")
             
-            ButtonView(buttonColor: .white, textColor: .black, buttonText: "Answer 3")
-                .padding(.horizontal)
-                .padding(.bottom, 10)
-            
-            Spacer()
-            
-            ButtonView(buttonColor: .green, textColor: .white, buttonText: "Submit")
-                .padding()
-            
-        }.navigationBarTitle("\(model.currentModule?.category ?? "") Test")
-        
+        }
+        else {
+            ProgressView()
+        }
     }
 }
 
-struct TestView_Previews: PreviewProvider {
-    static var previews: some View {
-        TestView()
-    }
-}
+//struct TestView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TestView()
+//    }
+//}
