@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import Firebase
 
 class ContentModel: ObservableObject {
+    
+    let db = Firestore.firestore()
     
     // List of Modules
     @Published var modules = [Module]()
@@ -37,18 +40,161 @@ class ContentModel: ObservableObject {
     
     init() {
         
-        // parse local json data
-        getLocalData()
+        // parse local styles for html
+        getLocalStyles()
+        
+        // Get database modules
+        getModules()
         
         // Download remote json file and parse
-        getRemoteData()
+        //getRemoteData()   // Commented out in order to use Firebase DB
         
     }
     
     // MARK: Data Methods
     
-    func getLocalData() {
+    func getLessons(module: Module, completion: @escaping () -> Void) {
         
+        // specify path
+        let collection = db.collection("modules").document(module.id).collection("lessons")
+        
+        // get documents
+        collection.getDocuments { snapshot, error in
+            
+            if error == nil && snapshot != nil {
+                
+                var lessons = [Lesson]()
+                
+                //  Loop through the docs and build array of lessons
+                for doc in snapshot!.documents {
+                    
+                    var l = Lesson()
+                    l.id = doc["id"] as? String ?? UUID().uuidString
+                    l.title = doc["title"] as? String ?? ""
+                    l.explanation = doc["explanation"] as? String ?? ""
+                    l.video = doc["video"] as? String ?? ""
+                    l.duration = doc["duration"] as? String ?? ""
+                    
+                    lessons.append(l)
+                    
+                }
+                
+                // Loop through published modules array and find the correct module
+                for (index, m) in self.modules.enumerated() {
+                    
+                    if m.id == module.id {
+                        
+                        // set the lesson
+                        self.modules[index].content.lessons = lessons
+                        
+                        // call the completion closure
+                        completion()
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    func getQuestions(module: Module, completion: @escaping () -> Void) {
+        
+        // specify path
+        let collection = db.collection("modules").document(module.id).collection("questions")
+        
+        // get documents
+        collection.getDocuments { snapshot, error in
+            
+            if error == nil && snapshot != nil {
+                
+                var questions = [Question]()
+                
+                //  Loop through the docs and build array of lessons
+                for doc in snapshot!.documents {
+                    
+                    var q = Question()
+                    q.id = doc["id"] as? String ?? UUID().uuidString
+                    q.content = doc["content"] as? String ?? ""
+                    q.correctIndex = doc["correctIndex"] as? Int ?? 0
+                    q.answers = doc["answers"] as? [String] ?? [String]()
+                    
+                    questions.append(q)
+                    
+                }
+                
+                // Loop through published modules array and find the correct module
+                for (index, m) in self.modules.enumerated() {
+                    
+                    if m.id == module.id {
+                        
+                        // set the lesson
+                        self.modules[index].test.questions = questions
+                        
+                        // call the completion closure
+                        completion()
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    func getModules() {
+        
+        let collection = db.collection("modules")
+        
+        collection.getDocuments { snapshot, error in
+            
+            if error == nil && snapshot != nil {
+                
+                // Create an array for the modules
+                var modules = [Module]()
+                
+                for doc in snapshot!.documents {
+                    
+                    // create a new module instance
+                    var m = Module()
+                    
+                    // parse out the values into module instance
+                    m.id = doc["id"] as? String ?? UUID().uuidString
+                    m.category = doc["category"] as? String ?? ""
+                    
+                    // parse the lesson content
+                    let contentMap = doc["content"] as! [String:Any]
+                    
+                    m.content.id = contentMap["id"] as? String ?? ""
+                    m.content.description = contentMap["description"] as? String ?? ""
+                    m.content.image = contentMap["image"] as? String ?? ""
+                    m.content.time = contentMap["time"] as? String ?? ""
+                    
+                    // parse the test content
+                    let testMap = doc["test"] as! [String:Any]
+                    
+                    m.test.id = testMap["id"] as? String ?? ""
+                    m.test.description = testMap["description"] as? String ?? ""
+                    m.test.image = testMap["image"] as? String ?? ""
+                    m.test.time = testMap["time"] as? String ?? ""
+                    
+                    
+                    // add to array
+                    modules.append(m)
+                    
+                }
+                
+                // Assign our module to the published property
+                DispatchQueue.main.async {
+                    
+                    self.modules = modules
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    func getLocalStyles() {
+        
+        /*  Commenting out in order to use Firebase DB
         //get url to json
         let url = Bundle.main.url(forResource: "data", withExtension: "json")
         
@@ -78,6 +224,7 @@ class ContentModel: ObservableObject {
         catch {
             print(error)
         }
+        */
         
         // parse the style data
         let styleUrl = Bundle.main.url(forResource: "style", withExtension: "html")
@@ -147,7 +294,7 @@ class ContentModel: ObservableObject {
     
     // MARK: Module Navigation Methods
     
-    func beginModule(_ moduleId:Int) {
+    func beginModule(_ moduleId:String) {
         
         // Find the index for the current module id
         for index in 0..<modules.count {
@@ -213,7 +360,7 @@ class ContentModel: ObservableObject {
         
     }
     
-    func beginTest(_ moduleId:Int) {
+    func beginTest(_ moduleId:String) {
         
         // Set the current module
         beginModule(moduleId)
