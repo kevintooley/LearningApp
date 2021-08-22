@@ -7,10 +7,13 @@
 
 import Foundation
 import Firebase
+import FirebaseAuth
 
 class ContentModel: ObservableObject {
     
     let db = Firestore.firestore()
+    
+    @Published var loggedIn = false
     
     // List of Modules
     @Published var modules = [Module]()
@@ -40,18 +43,52 @@ class ContentModel: ObservableObject {
     
     init() {
         
-        // parse local styles for html
-        getLocalStyles()
         
-        // Get database modules
-        getModules()
-        
-        // Download remote json file and parse
-        //getRemoteData()   // Commented out in order to use Firebase DB
         
     }
     
+    // MARK: Authentication Methods
+    
+    func checkLogin() {
+        
+        // check if there is a current user to determine if logged in
+        loggedIn = Auth.auth().currentUser != nil ? true : false
+        
+        // check if user meta data has been fetched.  If user was already logged in from previous session, we need to get their data
+        if UserService.shared.user.name == "" {
+            getUserData()
+        }
+    }
+    
     // MARK: Data Methods
+    
+    func getUserData() {
+        
+        // Check that there is a logged in user
+        guard Auth.auth().currentUser != nil else {
+            return
+        }
+        
+        // Get meta data for that user
+        let db = Firestore.firestore()
+        let ref = db.collection("users").document(Auth.auth().currentUser!.uid)
+        
+        ref.getDocument { snapshot, error in
+            
+            guard error == nil, snapshot != nil else {
+                return
+            }
+            
+            // parse the data
+            let data = snapshot!.data()
+            let user = UserService.shared.user
+            user.name = data?["name"] as? String ?? ""
+            user.lastModule = data?["lastModule"] as? Int
+            user.lastLesson = data?["lastLesson"] as? Int
+            user.lastQuestion = data?["lastQuestion"] as? Int
+            
+        }
+    }
     
     func getLessons(module: Module, completion: @escaping () -> Void) {
         
@@ -139,6 +176,9 @@ class ContentModel: ObservableObject {
     }
     
     func getModules() {
+        
+        // parse local styles for html
+        getLocalStyles()
         
         let collection = db.collection("modules")
         
