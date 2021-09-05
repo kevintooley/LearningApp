@@ -31,6 +31,7 @@
 		34E1A75D26BD8186004114AD /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E1A75C26BD8186004114AD /* Constants.swift */; };
 		34E1A75F26BD9B9E004114AD /* ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E1A75E26BD9B9E004114AD /* ButtonView.swift */; };
 		34E51EE726D278A0005D81C5 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E51EE626D278A0005D81C5 /* UserService.swift */; };
+		34E51EE926E4D456005D81C5 /* ResumeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E51EE826E4D456005D81C5 /* ResumeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 		34E1A75C26BD8186004114AD /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		34E1A75E26BD9B9E004114AD /* ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonView.swift; sourceTree = "<group>"; };
 		34E51EE626D278A0005D81C5 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
+		34E51EE826E4D456005D81C5 /* ResumeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResumeView.swift; sourceTree = "<group>"; };
 		784603BC84C09AAC76A9CB72 /* Pods_LearningApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LearningApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0CE8F07D21097972C6EA19F /* Pods-LearningApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LearningApp.release.xcconfig"; path = "Target Support Files/Pods-LearningApp/Pods-LearningApp.release.xcconfig"; sourceTree = "<group>"; };
 		D94145168FA60CAF56036646 /* Pods-LearningApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LearningApp.debug.xcconfig"; path = "Target Support Files/Pods-LearningApp/Pods-LearningApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 			children = (
 				34E1A73726BCA712004114AD /* HomeView.swift */,
 				34E1A75126BD42DB004114AD /* HomeViewRow.swift */,
+				34E51EE826E4D456005D81C5 /* ResumeView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -358,6 +361,7 @@
 				34E1A73626BCA712004114AD /* LearningApp.swift in Sources */,
 				34A892B926D1783F0051383A /* ProfileView.swift in Sources */,
 				34E1A75626BD575B004114AD /* ContentViewRow.swift in Sources */,
+				34E51EE926E4D456005D81C5 /* ResumeView.swift in Sources */,
 				34A892B726D1780E0051383A /* LoginView.swift in Sources */,
 				34E1A74A26BCA854004114AD /* ContentModel.swift in Sources */,
 				34E1A75026BCCAB7004114AD /* Models.swift in Sources */,

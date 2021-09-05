@@ -46,6 +46,10 @@ struct ContentDetailView: View {
                 else {
                     Button(action: {
                         model.currentContentSelected = nil
+                        
+                        //advance the lesson to force data update
+                        model.nextLession()
+                        
                     }, label: {
                         ButtonView(buttonColor: .green, textColor: .white, buttonText: "Complete Lesson")
                     })

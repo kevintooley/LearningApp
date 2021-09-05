@@ -47,6 +47,11 @@ struct LaunchView: View {
             .onAppear(perform: {
                 model.getModules()
             })
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification), perform: { _ in
+                
+                // Save data to DB when app is going to foreground to background
+                model.saveData(writeToDatabase: true)
+            })
         }
         
     }

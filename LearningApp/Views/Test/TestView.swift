@@ -17,6 +17,8 @@ struct TestView: View {
     @State var submitted = false
     @State var numCorrect = 0
     
+    @State var showResults = false
+    
     var body: some View {
         
         // compound if check is a workaround to possible IOS bug.
@@ -107,12 +109,25 @@ struct TestView: View {
                 Button(action: {
                     
                     // if answer has already been submitted
-                    if submitted {
-                        model.nextQuestion()
+                    if submitted == true{
                         
-                        //reset properties
-                        submitted = false
-                        selectedAnswerIndex = nil
+                        // Check if it was the last question
+                        if model.currentQuestionIndex + 1 == model.currentModule!.test.questions.count {
+                            
+                            // check next quetion and save progress
+                            model.nextQuestion()
+                            
+                            showResults = true
+                        }
+                        else {
+                            
+                            // Answer has alread been submitted, more to next and save
+                            model.nextQuestion()
+                            
+                            // Reset properties
+                            submitted = false
+                            selectedAnswerIndex = nil
+                        }
                     }
                     
                     // if answer has not been submitted yet, submit the answer
@@ -120,7 +135,6 @@ struct TestView: View {
                         
                         // toggle submitted flag
                         submitted = true
-                        
                         
                         // check if the answer is correct
                         if selectedAnswerIndex == model.currentQuestion!.correctIndex {
@@ -159,7 +173,11 @@ struct TestView: View {
         
         // Chck if answer has been submitted
         if submitted {
-            if model.currentQuestionIndex + 1 == model.currentModule!.test.questions.count {
+            
+            if model.currentModule == nil {
+                return "Finish"
+            }
+            else if model.currentQuestionIndex + 1 == model.currentModule!.test.questions.count {
                 // this is the last questions
                 return "Finish"
             }

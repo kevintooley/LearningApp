@@ -62,6 +62,31 @@ class ContentModel: ObservableObject {
     
     // MARK: Data Methods
     
+    func saveData(writeToDatabase:Bool = false) {
+        
+        if let loggedInUser = Auth.auth().currentUser {
+            
+            // Save locally
+            let user = UserService.shared.user
+            user.lastModule = currentModuleIndex
+            user.lastLesson = currentLessonIndex
+            user.lastQuestion = currentQuestionIndex
+            
+            // We don't have to write to DB everytime
+            if writeToDatabase {
+            
+                // Then save to database
+                let db = Firestore.firestore()
+                let ref = db.collection("users").document(loggedInUser.uid)
+                ref.setData(["lastModule": user.lastModule ?? NSNull(),
+                             "lastLesson": user.lastLesson ?? NSNull(),
+                             "lastQuestion": user.lastQuestion ?? NSNull() ], merge: true)
+            }
+        }
+        
+        
+    }
+    
     func getUserData() {
         
         // Check that there is a logged in user
@@ -355,6 +380,9 @@ class ContentModel: ObservableObject {
     
     func beginLesson(_ lessonIndex:Int) {
         
+        // Reset questionIndex because user is starting lessons now
+        currentQuestionIndex = 0
+        
         //Check that the lesson index is within range of module lessons
         if lessonIndex < currentModule!.content.lessons.count {
             currentLessonIndex = lessonIndex
@@ -398,6 +426,9 @@ class ContentModel: ObservableObject {
             
         }
         
+        // save the data
+        saveData()
+        
     }
     
     func beginTest(_ moduleId:String) {
@@ -407,6 +438,9 @@ class ContentModel: ObservableObject {
         
         // Set the current question
         currentQuestionIndex = 0
+        
+        // Reset lessonIndex because user is starting a test
+        currentLessonIndex = 0
         
         // if the module has questions for the test, set the currentQuestion to the first one
         if currentModule?.test.questions.count ?? 0 > 0 {
@@ -439,6 +473,8 @@ class ContentModel: ObservableObject {
             finalize = true
             
         }
+        
+        saveData()
         
     }
     
